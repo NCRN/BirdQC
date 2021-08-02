@@ -1,0 +1,99 @@
+---
+title: "NCRN Bird QC"
+output: html_document
+knit: (function(inputFile, encoding) { 
+          rmarkdown::render(inputFile,
+                        encoding=encoding, 
+                        output_file='NCRN_Bird_QC.html') })
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(NCRNbirds)
+library(tidyverse)
+library(DT)
+library(lubridate)
+
+options(htmlwidgets.TOJSON_ARGS = list(na = 'string'))
+
+NiceTable<-function(DF){
+   
+
+   datatable(DF, rownames = F, extensions = "Buttons", autoHideNavigation = T, options=list(
+      columnDefs=list(list(className='dt-center', targets=0:ncol(DF)-1 )),
+      pageLength=25,
+      dom='Btip',
+      buttons=c('copy','csv'))
+   )}
+
+errorText<-function(text) {cat(paste0("<span style='color:red;'>",text,"</span><br>"))}
+
+#DataDir<-"C:/Data/NCRN_Veg_2020"
+
+DataDir<-"C:/Data/Birds_NCRN/"
+
+NCRN<-importNCRNbirds(DataDir)
+
+#QCYears<-c(2008, 2012,2016, 2021)
+QCYears<-c(2007:2019)
+
+QCPoints<-getPoints(NCRN, years = QCYears)
+
+QCVisits<-getVisits(NCRN, years = QCYears)
+
+QCBirds<-getBirds(NCRN, years=QCYears) 
+
+```
+
+
+
+```{css, echo=FALSE}
+h1, h2, h3 {
+  text-align: center;
+}
+
+.nav>li>a {
+   padding: 10px;
+}
+```
+
+#  {.tabset .tabset-pills .tabset-fade}
+
+## Introduction
+
+**Run on:** `r format(Sys.Date(),"%B %d %Y") `.
+
+**Years covered:** `r paste0(min(QCYears),"-", max(QCYears)) `.
+
+
+### The following data is not currently QCed:
+
+#### All
+- None
+
+#### Points
+- None
+
+#### Visits
+- None
+
+#### Birds
+- None
+
+## Points
+
+```{r Plot-QC, child="01_BirdPointsQC.Rmd"}
+```
+
+## Visits
+
+<!-- ```{r Event-QC, child="02_BirdVisitsQC.Rmd"} -->
+<!-- ``` -->
+
+## Bird Data
+
+<!-- ```{r Plot_Floor-QC, child="03_BirdDataQC.Rmd"} -->
+<!-- ``` -->
+
