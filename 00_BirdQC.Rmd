@@ -30,13 +30,10 @@ NiceTable<-function(DF){
 
 errorText<-function(text) {cat(paste0("<span style='color:red;'>",text,"</span><br>"))}
 
-#DataDir<-"C:/Data/NCRN_Veg_2020"
-
 DataDir<-"C:/Data/Birds_NCRN/"
 
 NCRN<-importNCRNbirds(DataDir)
 
-#QCYears<-c(2008, 2012,2016, 2021)
 QCYears<-c(2007:2019)
 
 QCPoints<-getPoints(NCRN, years = QCYears)
@@ -74,7 +71,14 @@ h1, h2, h3 {
 - None
 
 #### Points
-- None
+- The following are not exported:
+   + Unit Group 
+   + Sub Unit Code
+   + UTM Zone and Coordinates
+   + Datum
+   + Levels 3 and 4 Omernik Names
+   + BCR 
+   + Location type
 
 #### Visits
 - None
