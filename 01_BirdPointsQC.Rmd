@@ -1,7 +1,7 @@
 ---
-title: "Forest Vegetation Plots QC"
+title: "Forest Bird Points QC"
 author: "John Paul Schmit"
-date: "5/18/2020"
+date: "8/3/2020"
 output: html_document
 ---
 
@@ -56,7 +56,7 @@ Points_Duplicated_GRTS<-QCPoints %>%
 ```
 
 
-#### **Plots Checked:** `r TotPlots` ####
+#### **Points Checked:** `r TotPlots` ####
 
 ### Unit Codes
 

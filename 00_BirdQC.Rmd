@@ -93,8 +93,8 @@ h1, h2, h3 {
 
 ## Visits
 
-<!-- ```{r Event-QC, child="02_BirdVisitsQC.Rmd"} -->
-<!-- ``` -->
+```{r Event-QC, child="02_BirdVisitsQC.Rmd"}
+```
 
 ## Bird Data
 
