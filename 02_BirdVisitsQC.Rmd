@@ -52,8 +52,23 @@ Visits_Bad_Visit<-QCVisits %>%
   filter(!Visit %in% 1:3) %>% 
   select(Admin_Unit_Code, Point_Name, EventDate, Visit)
 
+Visits_Duplicated_Visit<-QCVisits %>% 
+  group_by(Admin_Unit_Code, Point_Name, Year, Visit) %>% 
+  mutate(N=n()) %>% 
+  filter(N!=1) %>% 
+  select(Admin_Unit_Code,Point_Name, Year,Visit, EventDate)
 
+Visits_Missing_Visit <-QCVisits %>% 
+  group_by(Admin_Unit_Code, Point_Name, Year) %>% 
+  filter(n()!=max(Visit)) %>% 
+  select(Admin_Unit_Code,Point_Name, Year,Visit, EventDate) %>% 
+  pivot_wider(id_cols=c(Admin_Unit_Code, Point_Name, Year), names_from=Visit, names_prefix="Visit ", names_sort=T, values_from=EventDate)
 
+Visits_Bad_Order <-QCVisits %>% 
+  group_by(Admin_Unit_Code, Point_Name, Year, Visit) %>% 
+  mutate(Event_Order=rank(EventDate, ties.method = "average"),Visit_Order=rank(Visit, ties.method = "average")) %>% 
+  filter(Event_Order!=Visit_Order) %>% 
+  select(Admin_Unit_Code, Point_Name, Year, EventDate, Event_Order, Visit, Visit_Order)
 
 # #2.10.0
 # Events_Duplicated<-QCEvents %>% 
@@ -235,13 +250,24 @@ errorText("Visits that were not 10 minutes long:"); NiceTable(Visits_Bad_Length)
 
 ---
 
-### Visit NUmber
+### Visit Number
 
 ```{r Visits_visit_mumber, echo=FALSE, hold=FALSE, results="asis"}
 cat("<br>**Missing or Incorrect Visit Number**<br>")
 if(nrow(Visits_Bad_Visit)==0) cat("All visits have a valid visit number.<br>") else {
 errorText("Visits without a valid visit number:"); NiceTable(Visits_Bad_Visit)}
 
+cat("<br>**Duplicated Visit Numbers**<br>")
+if(nrow(Visits_Duplicated_Visit)==0) cat("No visit numbers were duplicated at a point in a single year.<br>") else {
+errorText("Duplicated Visit Numbers:"); NiceTable(Visits_Duplicated_Visit)}
+
+cat("<br>**Missing Visits**<br>")
+if(nrow(Visits_Missing_Visit)==0) cat("No visit numbers were skipped at a point in a single year.<br>") else {
+errorText("Groups of visits with a missing visit number:"); NiceTable(Visits_Missing_Visit)}
+
+cat("<br>**Visit Order vs Event Date Order**<br>")
+if(nrow(Visits_Bad_Order)==0) cat("All visit numbers are in the same order as their event dates.<br>") else {
+errorText("Viis numnber that are in a different order than their event dates:"); NiceTable(Visits_Bad_Order)}
 ```
 
 
