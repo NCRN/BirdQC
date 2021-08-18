@@ -1,0 +1,258 @@
+---
+title: "Bird Observation Data QC"
+author: "John Paul Schmit"
+date: "5/18/2020"
+output: html_document
+---
+
+```{r Field_Setup, include=F}
+TotObs<-nrow(QCBirds) #Total Number of visits checked
+
+# 3.1.0
+Birds_Bad_Unit<-QCBirds %>% 
+    filter(!Admin_Unit_Code %in% c("ANTI", "CATO", "CHOH", "GWMP", "HAFE", "MANA", "MONO", "NACE", "PRWI", "ROCR", "WOTR")) %>% 
+    select(Admin_Unit_Code, Point_Name, EventDate, AOU_Code)
+ 
+#3.2.0
+Birds_Missing_Point<-QCBirds %>% 
+  filter(is.na(Point_Name) | Point_Name=="" | !Point_Name %in% QCPoints$Point_Name) %>% 
+  select(Admin_Unit_Code, Point_Name, EventDate, AOU_Code)
+
+#3.3.0
+Birds_No_Date<-QCBirds %>%
+  filter(is.na(EventDate) | EventDate==""| !EventDate %in% QCVisits$EventDate)  %>%
+  select(Admin_Unit_Code,Point_Name, Year, EventDate, AOU_Code)
+ 
+#3.4.0
+Birds_Bad_Year<-QCBirds %>% filter(Year!=year(EventDate)) %>% 
+  select(Admin_Unit_Code, Point_Name, EventDate, Year, AOU_Code)
+
+#3.5.0
+Birds_Bad_Visit<-QCBirds %>% 
+   anti_join(QCVisits %>% select(Point_Name, EventDate, Visit)) %>% 
+   select(Admin_Unit_Code, Point_Name, EventDate, Visit, AOU_Code)
+ 
+#3.6.0
+Birds_No_AOU<-QCBirds %>% 
+   filter(is.na(AOU_Code) | AOU_Code=="" ) %>% 
+   select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code)
+
+Birds_No_Latin<-QCBirds %>% 
+   filter(is.na(Scientific_Name) | Scientific_Name=="" ) %>% 
+   select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, Scientific_Name)
+
+Birds_No_Common<-QCBirds %>% 
+   filter(is.na(Common_Name) | Common_Name=="" ) %>% 
+   select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, Common_Name)
+
+Birds_No_Taxon_Code<-QCBirds %>% 
+   filter(is.na(NPSTaxonCode) | NPSTaxonCode=="" ) %>% 
+   select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, NPSTaxonCode)
+
+Birds_No_TSN<-QCBirds %>% 
+   filter(is.na(AcceptedTSN) | AcceptedTSN=="" ) %>% 
+   select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, AcceptedTSN)
+
+# #2.8.0
+# Visits_Bad_Humidity<-QCVisits %>% 
+#   filter(is.na(Humidity) | Humidity=="" | Humidity < 40 | Humidity > 100) %>% 
+#     select(Admin_Unit_Code, Point_Name, Year, EventDate, Humidity)
+# 
+# Visits_Big_Humidity_Range<-QCVisits %>% 
+#   group_by(Admin_Unit_Code, Year, EventDate) %>% 
+#   summarise(Humidity_Min=min(Humidity), Humidity_Max=max(Humidity), Humidity_Range=Humidity_Max-Humidity_Min) %>% 
+#   filter(Humidity_Range>20) %>% 
+#   select(Admin_Unit_Code, Year, EventDate, Humidity_Min, Humidity_Max, Humidity_Range)
+# 
+# #2.9.0
+# Visits_Bad_Survey<-QCVisits %>% 
+#   filter(!Survey_Type %in% c("Forest","Grassland")) %>% 
+#   select(Admin_Unit_Code, Year, EventDate, Survey_Type)
+# 
+# #2.10.0
+# Visits_Bad_Sky <-QCVisits %>% 
+#   filter(
+#     !(Sky_Condition ==0 & Sky =="Clear or Few Clouds") & !(Sky_Condition==1 & Sky== "Partly Cloudy") &
+#     !(Sky_Condition ==2 & Sky =="Cloudy/Overcast") & !(Sky_Condition ==3 & Sky=="Fog") &
+#     !(Sky_Condition ==4 & Sky =="Mist/Drizzle") & !(Sky_Condition ==5 & Sky == "Rain Showers")
+#   ) %>% 
+#   select(Admin_Unit_Code, Year, EventDate, Sky_Condition, Sky)
+# 
+# #2.11.0
+# Visits_Bad_Wind <-QCVisits %>% 
+#   filter(
+#     !(Wind_Code ==0 & Wind =="Calm (< 1 mph) smoke rises vertically") & !(Wind_Code==1 & Wind == "Light air movement (1-3 mph) smoke drifts") &
+#     !(Wind_Code ==2 & Wind =="Light breeze (4-7 mph) wind felt on face") & !(Wind_Code ==3 & Wind =="Gentle breeze (8-12 mph), leaves in motion") &
+#     !(Wind_Code ==4 & Wind =="Moderate breeze (13-18 mph), moves small branches") & !(Wind_Code ==5 & Wind == "Fresh breeze (19-24 mph), small trees sway")
+#   ) %>% 
+#   select(Admin_Unit_Code, Year, EventDate, Wind_Code, Wind)
+# 
+# #2.12.0
+# Visits_Bad_Disturbance <-QCVisits %>% 
+#   filter(
+#     !(Disturbance_Level ==0 & Disturbance =="No effect on count") &
+#     !(Disturbance_Level ==1 & Disturbance == "Slight effect on count") &
+#     !(Disturbance_Level ==2 & Disturbance =="Moderate effect on count") &
+#     !(Disturbance_Level ==3 & Disturbance =="Serious effect on count") 
+#   ) %>% 
+#   select(Admin_Unit_Code, Year, EventDate, Disturbance_Level, Disturbance)
+# 
+# #2.13.0
+# Visits_Bad_Observer <- QCVisits %>% 
+#   filter(is.na(Observer) | Observer == "") %>% 
+#   select(Admin_Unit_Code, Year, EventDate, Observer)  
+
+```
+
+#### **Bird Observations Checked:** `r TotObs` ####
+
+
+### Bird Observation Unit Codes
+
+```{r Bird_Location, echo=FALSE, hold=FALSE, results="asis"}
+
+ cat("<br>**Missing or Incorrect Unit Code**<br>")
+ if(nrow(Birds_Bad_Unit)==0) cat("All bird observations have a recoginized unit code.<br>") else {
+ errorText("Bird observations without a recognized unit code:"); NiceTable(Birds_Bad_Unit)}
+
+```
+
+---
+
+### Bird Observation Points
+
+```{r Bird_Points, echo=FALSE, hold=FALSE, results="asis"}
+
+cat("<br>**Missing or Incorrect Point Name**<br>")
+if(nrow(Birds_Missing_Point)==0) cat("All bird observations have a point name that we use.<br>") else {
+errorText("Bird observations without a point name, or from a point we don't monitor:"); NiceTable(Birds_Missing_Point)}
+
+```
+
+
+---
+
+### Visit Date
+
+```{r Bird_Date, echo=FALSE, hold=FALSE, results="asis"}
+
+cat("<br>**Missing or Incorrect Visit Date**<br>")
+if(nrow(Visits_No_Date)==0) cat("All bird observations have a valid visit date.<br>") else {
+errorText("Birds observatiosn without a valid visit date:"); NiceTable(Birds_No_Date)}
+
+cat("<br>**Year should match Visit Date**<br>")
+if(nrow(Birds_Bad_Year)==0) cat("All bird observation years match their event dates.<br>") else {
+errorText("There is a mismach between year and event date:"); NiceTable(Birds_Bad_Year)}
+
+```
+
+---
+
+### Visit Number
+
+```{r Birds_visit_mumber, echo=FALSE, hold=FALSE, results="asis"}
+
+cat("<br>**Missing or Incorrect Visit Number**<br>")
+if(nrow(Birds_Bad_Visit)==0) cat("All bird observstions have a valid visit number.<br>") else {
+errorText("Bird obsservations without a valid visit number or a visit number that does not match the visti data:"); NiceTable(Birds_Bad_Visit)}
+
+```
+
+---
+
+### Bird Identification
+
+```{r Birds_Identification, echo=FALSE, hold=FALSE, results="asis"}
+
+cat("<br>**Missing AOU Code**<br>")
+if(nrow(Birds_No_AOU)==0) cat("All bird observations have an AOU code.<br>") else {
+errorText("Bird observations without an AOU code:"); NiceTable(Birds_No_AOU)}
+
+cat("<br>**Missing Scientific Name**<br>")
+if(nrow(Birds_No_Latin)==0) cat("All bird observations have a scientific name.<br>") else {
+errorText("Bird observations without a scientific name:"); NiceTable(Birds_No_Latin)}
+
+cat("<br>**Missing Common Name**<br>")
+if(nrow(Birds_No_Common)==0) cat("All bird observations have a common name.<br>") else {
+errorText("Bird observations without a common name:"); NiceTable(Birds_No_Common)}
+
+cat("<br>**Missing NPS Taxon Code**<br>")
+if(nrow(Birds_No_Taxon_Code)==0) cat("All bird observations have an NPS taxon code.<br>") else {
+errorText("Bird observations without an NPS taxon code:"); NiceTable(Birds_No_Taxon_Code)}
+
+cat("<br>**Missing Accepted TSN**<br>")
+if(nrow(Birds_No_TSN)==0) cat("All bird observations have an accpeted TSN.<br>") else {
+  errorText("Bird observations without an accepted TSN:"); NiceTable(Birds_No_TSN)}
+
+```
+
+---
+
+### Humidity
+
+```{r Field_Humidity, echo=FALSE, hold=FALSE, results="asis"}
+# cat("<br>**Missing or Suspicious Humidity**<br>")
+# if(nrow(Visits_Bad_Humidity)==0) cat("All visits have a humidity between 40 and 100%.<br>") else {
+# errorText("Visits without humidity between 40 and 100%:"); NiceTable(Visits_Bad_Humidity)}
+# 
+#  cat("<br>**Big Humidity Range**<br>")
+#  if(nrow(Visits_Big_Humidity_Range)==0) cat("All dates have a humidity range of less than 20 %.<br>") else {
+#  errorText("Event dates where the humidity range is 20 or more %:"); NiceTable(Visits_Big_Humidity_Range)}
+
+```
+
+---
+
+### Survey Type
+
+```{r Field_Survey, echo=FALSE, hold=FALSE, results="asis"}
+# cat("<br>**Missing or Incorrect Survey Type**<br>")
+# if(nrow(Visits_Bad_Survey)==0) cat("All visits have a survey type of Forest or Grassland.<br>") else {
+# errorText("Visits with a survey type that is not Forest or Grassalnd:"); NiceTable(Visits_Bad_Survey)}
+
+```
+
+---
+
+### Sky Conditions
+
+```{r Field_Sky, echo=FALSE, hold=FALSE, results="asis"}
+# cat("<br>**Missing or Incorrect Sky Conditions**<br>")
+# if(nrow(Visits_Bad_Sky)==0) cat("All visits have valid Sky and Sky Condidtion values <br>") else {
+# errorText("Visits with Sky or Sky Condition values we don't use:"); NiceTable(Visits_Bad_Sky)}
+
+```
+
+---
+
+### Wind
+
+```{r Field_Wind, echo=FALSE, hold=FALSE, results="asis"}
+# cat("<br>**Missing or Incorrect Wind**<br>")
+# if(nrow(Visits_Bad_Wind)==0) cat("All visits have valid Wind and Wind Code values <br>") else {
+# errorText("Visits with Wind or Wind Code values we don't use:"); NiceTable(Visits_Bad_Wind)}
+
+```
+
+---
+
+### Distrubance
+
+```{r Field_Disturbance, echo=FALSE, hold=FALSE, results="asis"}
+# cat("<br>**Missing or Incorrect Disturbance**<br>")
+# if(nrow(Visits_Bad_Disturbance)==0) cat("All visits have valid Disturbance and Distrubance Level values <br>") else {
+# errorText("Visits with Disturbance or Disturbance Level values we don't use:"); NiceTable(Visits_Bad_Disturbance)}
+
+```
+
+---
+
+### Observers
+
+```{r Field_Observers, echo=FALSE, hold=FALSE, results="asis"}
+# cat("<br>**Missing Observers**<br>")
+# if(nrow(Visits_Bad_Observer)==0) cat("All visits have an Observer.<br>") else {
+# errorText("Visits that are missing an Observer:"); NiceTable(Visits_Bad_Observer)}
+
+```
+

@@ -86,11 +86,11 @@ h1, h2, h3 {
 - We need a list of Observers and years to compare to the data.
 
 #### Birds
-- None
+- Need to create a master list of all AOU codes, Latin and common names, taxon codes and TSNs that we accept as valid
 
 ## Points
 
-```{r Plot-QC, child="01_BirdPointsQC.Rmd"}
+```{r Point-QC, child="01_BirdPointsQC.Rmd"}
 ```
 
 ## Visits
@@ -100,6 +100,8 @@ h1, h2, h3 {
 
 ## Bird Data
 
-<!-- ```{r Plot_Floor-QC, child="03_BirdDataQC.Rmd"} -->
-<!-- ``` -->
+```{r FieldData-QC, child="03_FieldDataQC.Rmd"}
+```
+
+
 
