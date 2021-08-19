@@ -40,7 +40,7 @@ QCPoints<-getPoints(NCRN, years = QCYears)
 
 QCVisits<-getVisits(NCRN, years = QCYears)
 
-QCBirds<-getBirds(NCRN, years=QCYears) 
+QCBirds<-getBirds(NCRN, years=QCYears, flyover=T,incidental = T, juvenile = T) 
 
 ```
 
@@ -67,9 +67,6 @@ h1, h2, h3 {
 
 ### The following data is not currently QCed:
 
-#### All
-- None
-
 #### Points
 - The following are not exported:
    + Unit Group 
@@ -85,8 +82,15 @@ h1, h2, h3 {
 - Contact_Role is currently all NA - no need to export that
 - We need a list of Observers and years to compare to the data.
 
+
 #### Birds
 - Need to create a master list of all AOU codes, Latin and common names, taxon codes and TSNs that we accept as valid
+- Formatting of text in interval lengths is inconsistent (space around dashes or not)
+- ID method codes are sometimes capitalized and sometimes not and have mystery number codes and should be cleaned up.
+- Sex ID code 0 and 1 seem to be interchangeable. What is going on there? Has this evolved over time?
+- Need to export the Previously_Obs (previously observed) data.
+- Need to decide if there is any way to ferret out suspicious bird counts. 
+
 
 ## Points
 
