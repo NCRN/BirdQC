@@ -75,6 +75,7 @@ Birds_Bad_Distance<-QCBirds %>%
              !(Distance_id==4 & Distance=="<= 25 Meters") &
              !(Distance_id==5 & Distance=="25 - 50 Meters") &
              !(is.na(Distance_id) & Flyover_Observed )) %>% 
+
    select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, Distance_id, Distance)
 
 Birds_Anachronoistic_Distance<- QCBirds %>% 
