@@ -53,54 +53,68 @@ Birds_No_TSN<-QCBirds %>%
    filter(is.na(AcceptedTSN) | AcceptedTSN=="" ) %>% 
    select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, AcceptedTSN)
 
-# #2.8.0
-# Visits_Bad_Humidity<-QCVisits %>% 
-#   filter(is.na(Humidity) | Humidity=="" | Humidity < 40 | Humidity > 100) %>% 
-#     select(Admin_Unit_Code, Point_Name, Year, EventDate, Humidity)
-# 
-# Visits_Big_Humidity_Range<-QCVisits %>% 
-#   group_by(Admin_Unit_Code, Year, EventDate) %>% 
-#   summarise(Humidity_Min=min(Humidity), Humidity_Max=max(Humidity), Humidity_Range=Humidity_Max-Humidity_Min) %>% 
-#   filter(Humidity_Range>20) %>% 
-#   select(Admin_Unit_Code, Year, EventDate, Humidity_Min, Humidity_Max, Humidity_Range)
-# 
-# #2.9.0
-# Visits_Bad_Survey<-QCVisits %>% 
-#   filter(!Survey_Type %in% c("Forest","Grassland")) %>% 
-#   select(Admin_Unit_Code, Year, EventDate, Survey_Type)
-# 
-# #2.10.0
-# Visits_Bad_Sky <-QCVisits %>% 
-#   filter(
-#     !(Sky_Condition ==0 & Sky =="Clear or Few Clouds") & !(Sky_Condition==1 & Sky== "Partly Cloudy") &
-#     !(Sky_Condition ==2 & Sky =="Cloudy/Overcast") & !(Sky_Condition ==3 & Sky=="Fog") &
-#     !(Sky_Condition ==4 & Sky =="Mist/Drizzle") & !(Sky_Condition ==5 & Sky == "Rain Showers")
-#   ) %>% 
-#   select(Admin_Unit_Code, Year, EventDate, Sky_Condition, Sky)
-# 
-# #2.11.0
-# Visits_Bad_Wind <-QCVisits %>% 
-#   filter(
-#     !(Wind_Code ==0 & Wind =="Calm (< 1 mph) smoke rises vertically") & !(Wind_Code==1 & Wind == "Light air movement (1-3 mph) smoke drifts") &
-#     !(Wind_Code ==2 & Wind =="Light breeze (4-7 mph) wind felt on face") & !(Wind_Code ==3 & Wind =="Gentle breeze (8-12 mph), leaves in motion") &
-#     !(Wind_Code ==4 & Wind =="Moderate breeze (13-18 mph), moves small branches") & !(Wind_Code ==5 & Wind == "Fresh breeze (19-24 mph), small trees sway")
-#   ) %>% 
-#   select(Admin_Unit_Code, Year, EventDate, Wind_Code, Wind)
-# 
-# #2.12.0
-# Visits_Bad_Disturbance <-QCVisits %>% 
-#   filter(
-#     !(Disturbance_Level ==0 & Disturbance =="No effect on count") &
-#     !(Disturbance_Level ==1 & Disturbance == "Slight effect on count") &
-#     !(Disturbance_Level ==2 & Disturbance =="Moderate effect on count") &
-#     !(Disturbance_Level ==3 & Disturbance =="Serious effect on count") 
-#   ) %>% 
-#   select(Admin_Unit_Code, Year, EventDate, Disturbance_Level, Disturbance)
-# 
-# #2.13.0
-# Visits_Bad_Observer <- QCVisits %>% 
-#   filter(is.na(Observer) | Observer == "") %>% 
-#   select(Admin_Unit_Code, Year, EventDate, Observer)  
+#3.7.0
+Birds_Bad_Interval<-QCBirds %>% 
+   filter(!(Interval==1 & Interval_Length=="0-2.5 min") &
+             !(Interval==2 & Interval_Length=="2.5 - 5 min") &
+             !(Interval==3 & Interval_Length=="5 - 7.5 min") &
+             !(Interval==4 & Interval_Length=="7.5 - 10 min")) %>% 
+   select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, Interval, Interval_Length)
+
+#3.8.0
+Birds_Bad_Method<-QCBirds %>% 
+   filter(!(ID_Method_Code=="C" & ID_Method=="Calling") &
+             !(ID_Method_Code=="S" & ID_Method=="Singing") &
+             !(ID_Method_Code=="V" & ID_Method=="Visualization") ) %>% 
+   select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, ID_Method_Code, ID_Method)
+
+#3.9.0
+Birds_Bad_Distance<-QCBirds %>% 
+   filter(!(Distance_id==1 & Distance=="<= 50 Meters") &
+             !(Distance_id==2 & Distance=="50 - 100 Meters") &
+             !(Distance_id==4 & Distance=="<= 25 Meters") &
+             !(Distance_id==5 & Distance=="25 - 50 Meters") &
+             !(is.na(Distance_id) & Flyover_Observed )) %>% 
+   select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, Distance_id, Distance)
+
+Birds_Anachronoistic_Distance<- QCBirds %>% 
+   filter( (Distance_id==1 & Year>2018) |
+           (Distance_id==4 & Year<2019) |
+           (Distance_id==5 & Year<2019)  ) %>% 
+   select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, Distance_id, Distance)   
+
+#3.10.0
+Birds_Bad_Sex<-QCBirds %>% 
+   filter(!(Sex_ID==1 & Sex=="Undetermined") &
+          !(Sex_ID==2 & Sex=="Male") &
+          !(Sex_ID==3 & Sex =="Female") ) %>% 
+    select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, Sex_ID, Sex)  
+
+
+#3.11.0
+Birds_Bad_Flyover<-QCBirds %>% 
+   filter(!Flyover_Observed %in% c(0,1)) %>% 
+    select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, Flyover_Observed) 
+
+#3.12.0
+Birds_Bad_Three_Min<-QCBirds %>% 
+   filter(!Initial_Three_Min_Cnt %in% c(0,1)) %>% 
+    select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, Initial_Three_Min_Cnt)
+
+#3.13.0
+Birds_Bad_Stewardship<-QCBirds %>% 
+   filter(!Regional_Stewardship_Status %in% c(0,1)) %>% 
+    select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, Regional_Stewardship_Status)
+
+#3.14.0
+Birds_Bad_Watchlist<-QCBirds %>% 
+   filter(!PIF_Watchlist_Status %in% c(0,1)) %>% 
+    select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, PIF_Watchlist_Status)
+
+#3.15.0
+Birds_Bad_Count<-QCBirds %>% 
+   filter(is.na(Bird_Count) | Bird_Count<1) %>% 
+    select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, Bird_Count)
 
 ```
 
@@ -188,71 +202,117 @@ if(nrow(Birds_No_TSN)==0) cat("All bird observations have an accpeted TSN.<br>")
 
 ---
 
-### Humidity
+### Interval
 
-```{r Field_Humidity, echo=FALSE, hold=FALSE, results="asis"}
-# cat("<br>**Missing or Suspicious Humidity**<br>")
-# if(nrow(Visits_Bad_Humidity)==0) cat("All visits have a humidity between 40 and 100%.<br>") else {
-# errorText("Visits without humidity between 40 and 100%:"); NiceTable(Visits_Bad_Humidity)}
-# 
-#  cat("<br>**Big Humidity Range**<br>")
-#  if(nrow(Visits_Big_Humidity_Range)==0) cat("All dates have a humidity range of less than 20 %.<br>") else {
-#  errorText("Event dates where the humidity range is 20 or more %:"); NiceTable(Visits_Big_Humidity_Range)}
+```{r Birds_Interval, echo=FALSE, hold=FALSE, results="asis"}
+
+cat("<br>**Missing or Inconsistent Interval and Interval Length**<br>")
+if(nrow(Birds_Bad_Interval)==0) cat("All bird observations have consistent intrevals and interval lengths.<br>") else {
+errorText("Bird observatrions with inconsistent intervals and interval lengths:"); NiceTable(Birds_Bad_Interval)}
 
 ```
 
 ---
 
-### Survey Type
+### ID Method
 
-```{r Field_Survey, echo=FALSE, hold=FALSE, results="asis"}
-# cat("<br>**Missing or Incorrect Survey Type**<br>")
-# if(nrow(Visits_Bad_Survey)==0) cat("All visits have a survey type of Forest or Grassland.<br>") else {
-# errorText("Visits with a survey type that is not Forest or Grassalnd:"); NiceTable(Visits_Bad_Survey)}
+```{r Birds_Method, echo=FALSE, hold=FALSE, results="asis"}
 
-```
-
----
-
-### Sky Conditions
-
-```{r Field_Sky, echo=FALSE, hold=FALSE, results="asis"}
-# cat("<br>**Missing or Incorrect Sky Conditions**<br>")
-# if(nrow(Visits_Bad_Sky)==0) cat("All visits have valid Sky and Sky Condidtion values <br>") else {
-# errorText("Visits with Sky or Sky Condition values we don't use:"); NiceTable(Visits_Bad_Sky)}
+cat("<br>**Missing or Inconsistent ID Method and Code**<br>")
+if(nrow(Birds_Bad_Method)==0) cat("All bird observations have consistent ID Methods and ID Method Codes.<br>") else {
+errorText("Bird observatrions with inconsistent ID Methods and ID Method Codes:"); NiceTable(Birds_Bad_Method)}
 
 ```
 
 ---
 
-### Wind
+### Distance
 
-```{r Field_Wind, echo=FALSE, hold=FALSE, results="asis"}
-# cat("<br>**Missing or Incorrect Wind**<br>")
-# if(nrow(Visits_Bad_Wind)==0) cat("All visits have valid Wind and Wind Code values <br>") else {
-# errorText("Visits with Wind or Wind Code values we don't use:"); NiceTable(Visits_Bad_Wind)}
+```{r Birds_Distance, echo=FALSE, hold=FALSE, results="asis"}
+
+cat("<br>**Missing or Inconsistent Distance ID and Distance**<br>")
+if(nrow(Birds_Bad_Distance)==0) cat("All bird observations have consistent Distance IDs and Distances.<br>") else {
+errorText("Bird observatrions with inconsistent Distance IDs and Distances:"); NiceTable(Birds_Bad_Distance)}
+
+cat("<br>**Anachronistic Distance Bands**<br>")
+if(nrow(Birds_Anachronoistic_Distance)==0) cat("All bird observations have Distance IDs and Distances that were in use that year.<br>") else {
+errorText("Bird observatrions with Distance IDs and Distances that were not in use in that year:"); NiceTable(Birds_Bad_Distance)}
+
+```
+
+
+---
+
+### Sex
+
+```{r Birds_Sex, echo=FALSE, hold=FALSE, results="asis"}
+
+cat("<br>**Missing or Inconsistent Sex ID and Sex**<br>")
+if(nrow(Birds_Bad_Sex)==0) cat("All bird observations have consistent Sex IDs and Sexes.<br>") else {
+errorText("Bird observations with inconsistent Sex IDs and Sexes:"); NiceTable(Birds_Bad_Sex)}
 
 ```
 
 ---
 
-### Distrubance
+### Flyovers
 
-```{r Field_Disturbance, echo=FALSE, hold=FALSE, results="asis"}
-# cat("<br>**Missing or Incorrect Disturbance**<br>")
-# if(nrow(Visits_Bad_Disturbance)==0) cat("All visits have valid Disturbance and Distrubance Level values <br>") else {
-# errorText("Visits with Disturbance or Disturbance Level values we don't use:"); NiceTable(Visits_Bad_Disturbance)}
+```{r Birds_Flyovers, echo=FALSE, hold=FALSE, results="asis"}
+
+cat("<br>**Missing or Invalid Flyover Codes**<br>")
+if(nrow(Birds_Bad_Flyover)==0) cat("All bird observations have valid Flyover codes.<br>") else {
+errorText("Bird observatrions with invalid flyover codes:"); NiceTable(Birds_Bad_Flyover)}
 
 ```
 
 ---
 
-### Observers
+### Initial Three Minute Count
 
-```{r Field_Observers, echo=FALSE, hold=FALSE, results="asis"}
-# cat("<br>**Missing Observers**<br>")
-# if(nrow(Visits_Bad_Observer)==0) cat("All visits have an Observer.<br>") else {
-# errorText("Visits that are missing an Observer:"); NiceTable(Visits_Bad_Observer)}
+```{r Birds_Three_Min, echo=FALSE, hold=FALSE, results="asis"}
+
+cat("<br>**Missing or Invalid Three Minute Count Codes**<br>")
+if(nrow(Birds_Bad_Three_Min)==0) cat("All bird observations have valid Initial Three Minute Count codes.<br>") else {
+errorText("Bird observations with invalid Three Minue Count Codes:"); NiceTable(Birds_Bad_Three_Min)}
+
+```
+
+---
+
+### Retgional Stewardship Status
+
+```{r Birds_Stewardship, echo=FALSE, hold=FALSE, results="asis"}
+
+cat("<br>**Missing or Invalid Regional Stewardship Status Codes**<br>")
+if(nrow(Birds_Bad_Stewardship)==0) cat("All bird observations have valid Regional Stewardship Status codes.<br>") else {
+errorText("Bird observations with invalid Regional Stewardship Status codes:"); NiceTable(Birds_Bad_Stewardship)}
+
+```
+
+---
+
+### PIF Watchlist Status
+
+```{r Birds_Watchlist, echo=FALSE, hold=FALSE, results="asis"}
+
+cat("<br>**Missing or Invalid PIF Watchlist Status Codes**<br>")
+if(nrow(Birds_Bad_Watchlist)==0) cat("All bird observations have valid PIF Watchlist Status codes.<br>") else {
+errorText("Bird observations with invalid PIF Wathclist Status codes:"); NiceTable(Birds_Bad_Watchlist)}
+
+```
+
+
+
+
+---
+
+### Bird Count
+
+```{r Birds_Count, echo=FALSE, hold=FALSE, results="asis"}
+
+cat("<br>**Missing or Invalid Bird Count**<br>")
+if(nrow(Birds_Bad_Count)==0) cat("All bird observations have a Bird Count >0.<br>") else {
+errorText("Bird observations with a missing or <1 Bird Count:"); NiceTable(Birds_Bad_Count)}
 
 ```
 
