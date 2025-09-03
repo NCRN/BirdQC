@@ -30,11 +30,13 @@ NiceTable<-function(DF){
 
 errorText<-function(text) {cat(paste0("<span style='color:red;'>",text,"</span><br>"))}
 
-DataDir<-"C:/Data/Birds_NCRN/"
+#DataDir<-"C:/Users/jschmit/OneDrive - DOI/Data/Birds_NCRN/"
+
+DataDir<-"C:/Users/jschmit/OneDrive - DOI/Data/NCRN_Birds_2025/"
 
 NCRN<-importNCRNbirds(DataDir)
 
-QCYears<-c(2007:2019)
+QCYears<-c(2025)
 
 QCPoints<-getPoints(NCRN, years = QCYears)
 

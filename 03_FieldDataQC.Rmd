@@ -45,13 +45,13 @@ Birds_No_Common<-QCBirds %>%
    filter(is.na(Common_Name) | Common_Name=="" ) %>% 
    select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, Common_Name)
 
-Birds_No_Taxon_Code<-QCBirds %>% 
-   filter(is.na(NPSTaxonCode) | NPSTaxonCode=="" ) %>% 
-   select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, NPSTaxonCode)
-
-Birds_No_TSN<-QCBirds %>% 
-   filter(is.na(AcceptedTSN) | AcceptedTSN=="" ) %>% 
-   select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, AcceptedTSN)
+# Birds_No_Taxon_Code<-QCBirds %>% 
+#    filter(is.na(NPSTaxonCode) | NPSTaxonCode=="" ) %>% 
+#    select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, NPSTaxonCode)
+# 
+# Birds_No_TSN<-QCBirds %>% 
+#    filter(is.na(AcceptedTSN) | AcceptedTSN=="" ) %>% 
+#    select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, AcceptedTSN)
 
 #3.7.0
 Birds_Bad_Interval<-QCBirds %>% 
@@ -71,17 +71,17 @@ Birds_Bad_Method<-QCBirds %>%
 #3.9.0
 Birds_Bad_Distance<-QCBirds %>% 
    filter(!(Distance_id==1 & Distance=="<= 50 Meters") &
-             !(Distance_id==2 & Distance=="50 - 100 Meters") &
-             !(Distance_id==4 & Distance=="<= 25 Meters") &
-             !(Distance_id==5 & Distance=="25 - 50 Meters") &
-             !(is.na(Distance_id) & Flyover_Observed )) %>% 
+             !(Distance_id==2 & Distance=="51 - 100 Meters") &
+             !(Distance_id==3 & Distance=="<= 25 Meters") &
+             !(Distance_id==4 & Distance=="26 - 50 Meters") &
+             !(is.na(Distance_id) & FlyoverObserved )) %>% 
 
    select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, Distance_id, Distance)
 
 Birds_Anachronoistic_Distance<- QCBirds %>% 
    filter( (Distance_id==1 & Year>2018) |
-           (Distance_id==4 & Year<2019) |
-           (Distance_id==5 & Year<2019)  ) %>% 
+           (Distance_id==3 & Year<2019) |
+           (Distance_id==4 & Year<2019)  ) %>% 
    select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, Distance_id, Distance)   
 
 #3.10.0
@@ -94,23 +94,23 @@ Birds_Bad_Sex<-QCBirds %>%
 
 #3.11.0
 Birds_Bad_Flyover<-QCBirds %>% 
-   filter(!Flyover_Observed %in% c(0,1)) %>% 
-    select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, Flyover_Observed) 
+   filter(!FlyoverObserved %in% c(0,1)) %>% 
+    select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, FlyoverObserved) 
 
 #3.12.0
 Birds_Bad_Three_Min<-QCBirds %>% 
-   filter(!Initial_Three_Min_Cnt %in% c(0,1)) %>% 
-    select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, Initial_Three_Min_Cnt)
+   filter(!FirstThreeMinutes %in% c(0,1)) %>% 
+    select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, FirstThreeMinutes)
 
-#3.13.0
-Birds_Bad_Stewardship<-QCBirds %>% 
-   filter(!Regional_Stewardship_Status %in% c(0,1)) %>% 
-    select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, Regional_Stewardship_Status)
+# #3.13.0
+# Birds_Bad_Stewardship<-QCBirds %>% 
+#    filter(!Regional_Stewardship_Status %in% c(0,1)) %>% 
+#     select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, Regional_Stewardship_Status)
 
 #3.14.0
-Birds_Bad_Watchlist<-QCBirds %>% 
-   filter(!PIF_Watchlist_Status %in% c(0,1)) %>% 
-    select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, PIF_Watchlist_Status)
+# Birds_Bad_Watchlist<-QCBirds %>% 
+#    filter(!PIF_Watchlist_Status %in% c(0,1)) %>% 
+#     select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, PIF_Watchlist_Status)
 
 #3.15.0
 Birds_Bad_Count<-QCBirds %>% 
@@ -190,14 +190,14 @@ errorText("Bird observations without a scientific name:"); NiceTable(Birds_No_La
 cat("<br>**Missing Common Name**<br>")
 if(nrow(Birds_No_Common)==0) cat("All bird observations have a common name.<br>") else {
 errorText("Bird observations without a common name:"); NiceTable(Birds_No_Common)}
-
-cat("<br>**Missing NPS Taxon Code**<br>")
-if(nrow(Birds_No_Taxon_Code)==0) cat("All bird observations have an NPS taxon code.<br>") else {
-errorText("Bird observations without an NPS taxon code:"); NiceTable(Birds_No_Taxon_Code)}
-
-cat("<br>**Missing Accepted TSN**<br>")
-if(nrow(Birds_No_TSN)==0) cat("All bird observations have an accpeted TSN.<br>") else {
-  errorText("Bird observations without an accepted TSN:"); NiceTable(Birds_No_TSN)}
+# 
+# cat("<br>**Missing NPS Taxon Code**<br>")
+# if(nrow(Birds_No_Taxon_Code)==0) cat("All bird observations have an NPS taxon code.<br>") else {
+# errorText("Bird observations without an NPS taxon code:"); NiceTable(Birds_No_Taxon_Code)}
+# 
+# cat("<br>**Missing Accepted TSN**<br>")
+# if(nrow(Birds_No_TSN)==0) cat("All bird observations have an accpeted TSN.<br>") else {
+#   errorText("Bird observations without an accepted TSN:"); NiceTable(Birds_No_TSN)}
 
 ```
 
@@ -237,7 +237,7 @@ errorText("Bird observatrions with inconsistent Distance IDs and Distances:"); N
 
 cat("<br>**Anachronistic Distance Bands**<br>")
 if(nrow(Birds_Anachronoistic_Distance)==0) cat("All bird observations have Distance IDs and Distances that were in use that year.<br>") else {
-errorText("Bird observatrions with Distance IDs and Distances that were not in use in that year:"); NiceTable(Birds_Bad_Distance)}
+errorText("Bird observations with Distance IDs and Distances that were not in use in that year:"); NiceTable(Birds_Anachronoistic_Distance)}
 
 ```
 
@@ -280,32 +280,27 @@ errorText("Bird observations with invalid Three Minue Count Codes:"); NiceTable(
 
 ---
 
-### Retgional Stewardship Status
+<!-- ### Retgional Stewardship Status -->
 
-```{r Birds_Stewardship, echo=FALSE, hold=FALSE, results="asis"}
+<!-- ```{r Birds_Stewardship, echo=FALSE, hold=FALSE, results="asis"} -->
 
-cat("<br>**Missing or Invalid Regional Stewardship Status Codes**<br>")
-if(nrow(Birds_Bad_Stewardship)==0) cat("All bird observations have valid Regional Stewardship Status codes.<br>") else {
-errorText("Bird observations with invalid Regional Stewardship Status codes:"); NiceTable(Birds_Bad_Stewardship)}
+<!-- cat("<br>**Missing or Invalid Regional Stewardship Status Codes**<br>") -->
+<!-- if(nrow(Birds_Bad_Stewardship)==0) cat("All bird observations have valid Regional Stewardship Status codes.<br>") else { -->
+<!-- errorText("Bird observations with invalid Regional Stewardship Status codes:"); NiceTable(Birds_Bad_Stewardship)} -->
 
-```
+<!-- ``` -->
 
----
+<!-- --- -->
+<!-- ### PIF Watchlist Status -->
 
-### PIF Watchlist Status
+<!-- ```{r Birds_Watchlist, echo=FALSE, hold=FALSE, results="asis"} -->
 
-```{r Birds_Watchlist, echo=FALSE, hold=FALSE, results="asis"}
+<!-- cat("<br>**Missing or Invalid PIF Watchlist Status Codes**<br>") -->
+<!-- if(nrow(Birds_Bad_Watchlist)==0) cat("All bird observations have valid PIF Watchlist Status codes.<br>") else { -->
+<!-- errorText("Bird observations with invalid PIF Wathclist Status codes:"); NiceTable(Birds_Bad_Watchlist)} -->
 
-cat("<br>**Missing or Invalid PIF Watchlist Status Codes**<br>")
-if(nrow(Birds_Bad_Watchlist)==0) cat("All bird observations have valid PIF Watchlist Status codes.<br>") else {
-errorText("Bird observations with invalid PIF Wathclist Status codes:"); NiceTable(Birds_Bad_Watchlist)}
+<!-- ``` -->
 
-```
-
-
-
-
----
 
 ### Bird Count
 
