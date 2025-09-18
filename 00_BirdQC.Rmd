@@ -32,11 +32,11 @@ errorText<-function(text) {cat(paste0("<span style='color:red;'>",text,"</span><
 
 #DataDir<-"C:/Users/jschmit/OneDrive - DOI/Data/Birds_NCRN/"
 
-DataDir<-"C:/Users/jschmit/OneDrive - DOI/Data/NCRN_Birds_2025/"
+DataDir<-"C:/Users/jschmit/OneDrive - DOI/Data/NCRN_Birds_2025/Forest"
 
 NCRN<-importNCRNbirds(DataDir)
 
-QCYears<-c(2025)
+QCYears<-c(2007:2025)
 
 QCPoints<-getPoints(NCRN, years = QCYears)
 

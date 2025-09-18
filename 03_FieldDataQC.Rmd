@@ -79,7 +79,7 @@ Birds_Bad_Distance<-QCBirds %>%
    select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, Distance_id, Distance)
 
 Birds_Anachronoistic_Distance<- QCBirds %>% 
-   filter( (Distance_id==1 & Year>2018) |
+   filter( (Distance_id==1 & Year>2018 & !FlyoverObserved) |
            (Distance_id==3 & Year<2019) |
            (Distance_id==4 & Year<2019)  ) %>% 
    select(Admin_Unit_Code, Point_Name, Year, EventDate, AOU_Code, Distance_id, Distance)   
@@ -169,7 +169,7 @@ errorText("There is a mismach between year and event date:"); NiceTable(Birds_Ba
 
 cat("<br>**Missing or Incorrect Visit Number**<br>")
 if(nrow(Birds_Bad_Visit)==0) cat("All bird observstions have a valid visit number.<br>") else {
-errorText("Bird obsservations without a valid visit number or a visit number that does not match the visti data:"); NiceTable(Birds_Bad_Visit)}
+errorText("Bird obsservations without a valid visit number or a visit number that does not match the visit data:"); NiceTable(Birds_Bad_Visit)}
 
 ```
 
